@@ -37,3 +37,11 @@ def update_MyProjectsView(request, scan_id):
         return Response({"message": "Scan moved to trash"}, status=status.HTTP_200_OK)
     except Scan.DoesNotExist:
         return Response({"error": "Scan not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def trashed_scans_view(request):
+    trashed_scans = Scan.objects.filter(trash=True)
+    serializer = ScanSerializer(trashed_scans, many=True)
+    return Response(serializer.data)

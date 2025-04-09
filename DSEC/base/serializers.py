@@ -1,4 +1,17 @@
+from rest_framework import serializers
+from .models import Scan
+from .models import User
+
+class ScanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Scan
+        fields = '__all__'
+
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [ 'username', 'email','id','is_admin']
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod

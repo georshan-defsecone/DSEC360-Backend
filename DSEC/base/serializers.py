@@ -18,6 +18,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         # Include additional user info in the response body
         data['username'] = self.user.username
         data['email'] = self.user.email
-        data['is_admin'] = self.user.is_superuser
+        data['is_admin'] = self.user.is_admin
 
         return data

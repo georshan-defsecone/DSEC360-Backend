@@ -45,3 +45,10 @@ def trashed_scans_view(request):
     trashed_scans = Scan.objects.filter(trash=True)
     serializer = ScanSerializer(trashed_scans, many=True)
     return Response(serializer.data)
+
+# Create your views here.
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import MyTokenObtainPairSerializer
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer

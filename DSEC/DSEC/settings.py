@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -40,10 +41,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'base'
+    'base',
+    "corsheaders",
+
+
 ]
 
 MIDDLEWARE = [
+     'corsheaders.middleware.CorsMiddleware',
+     'django.middleware.common.CommonMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -97,8 +104,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'defsecone',
-        'USER': 'Nagul',
-        'PASSWORD': '252005',
+        'USER': 'postgres',
+        'PASSWORD': 'Vignesh_160',
         'HOST': 'localhost',
         'PORT': '5432'
     }
@@ -147,5 +154,5 @@ AUTH_USER_MODEL = 'base.User'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
+AUTH_USER_MODEL = 'base.User'
+CORS_ALLOW_ALL_ORIGINS = True  

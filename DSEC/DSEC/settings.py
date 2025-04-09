@@ -104,8 +104,6 @@ DATABASES = {
         'NAME': 'defsecone',
         'USER': 'postgres',
         'PASSWORD': 'Hackerspec123@',
-        'USER': 'postgres',
-        'PASSWORD': 'rohinth123',
         'HOST': 'localhost',
         'PORT': '5432'
     }

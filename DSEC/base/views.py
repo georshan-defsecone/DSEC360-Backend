@@ -52,3 +52,16 @@ from .serializers import MyTokenObtainPairSerializer
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny,IsAuthenticated
+from rest_framework.response import Response
+from .models import User
+from .serializers import UserSerializer
+from .permissions import IsAdminUserCustom
+
+@api_view(['GET'])
+@permission_classes([IsAdminUserCustom])
+def get_all_users(request):
+    users = User.objects.all()  # Get all users
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)

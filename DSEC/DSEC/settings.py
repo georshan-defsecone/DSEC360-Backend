@@ -104,8 +104,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'defsecone',
-        'USER': 'postgres',
-        'PASSWORD': 'Vignesh_160',
+        'USER': 'Nagul',
+        'PASSWORD': '252005',
         'HOST': 'localhost',
         'PORT': '5432'
     }
@@ -155,4 +155,4 @@ AUTH_USER_MODEL = 'base.User'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'base.User'
-CORS_ALLOW_ALL_ORIGINS = True  
+CORS_ALLOW_ALL_ORIGINS = True

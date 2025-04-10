@@ -32,6 +32,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     
 class Scan(models.Model):
+    project_id = models.AutoField(primary_key=True)
     project_name = models.CharField(max_length=255)
     scan_name = models.CharField(max_length=255)
     scan_id = models.CharField(max_length=100, unique=True)

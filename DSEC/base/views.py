@@ -62,3 +62,15 @@ def get_all_users(request):
     users = User.objects.all()  
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAdminUserCustom])
+def project_scans_view(request, project_id):
+    print("scans")
+    try:
+        scans = Scan.objects.filter(project_id=project_id, trash=False)
+        
+        serializer = ScanSerializer(scans, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Scan.DoesNotExist:
+        return Response({"error": "No scans found for this project"}, status=status.HTTP_404_NOT_FOUND)

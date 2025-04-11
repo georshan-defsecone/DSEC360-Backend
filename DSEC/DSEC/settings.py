@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'base',
     "corsheaders",
+
+
 ]
 
 MIDDLEWARE = [
@@ -102,8 +104,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'defsecone',
-        'USER': 'postgres',
-        'PASSWORD': 'Hackerspec123@',
+        'USER': 'Nagul',
+        'PASSWORD': '252005',
         'HOST': 'localhost',
         'PORT': '5432'
     }
@@ -152,7 +154,5 @@ AUTH_USER_MODEL = 'base.User'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-CORS_ALLOW_ALL_ORIGINS = True  
-
-
+AUTH_USER_MODEL = 'base.User'
+CORS_ALLOW_ALL_ORIGINS = True

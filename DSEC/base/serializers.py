@@ -27,3 +27,20 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['is_admin'] = self.user.is_admin
 
         return data
+    
+class RegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password', 'is_admin']
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = User(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            is_admin=validated_data.get('is_admin', False)
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+

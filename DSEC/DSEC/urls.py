@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from base.views import MyTokenObtainPairView
+from base.views import MyTokenObtainPairSerializer, MyTokenObtainPairView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [

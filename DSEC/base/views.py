@@ -80,7 +80,7 @@ def get_all_users(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def compliance_data(request, os_name):
+def get_compliance_data(request, os_name):
     try:
         file_path = os.path.join(settings.BASE_DIR, 'base', 'data', 'Configuration_Audit.xlsx')
 
@@ -90,6 +90,26 @@ def compliance_data(request, os_name):
         df = pd.read_excel(file_path)
         print("DataFrame loaded successfully!")
         df = df[df['Name'].str.lower() == os_name.lower()]
+        json_data = df.to_dict(orient='records')
+        return Response(json_data, status=200)
+
+    except Exception as e:
+        print("Error while loading Excel:", e)
+        return Response({'error': str(e)}, status=500)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_compromise_assessment_data(request, os_name):
+    try:
+        file_path = os.path.join(settings.BASE_DIR, 'base', 'data', 'Compromise_Assessment_Windows.xlsx')
+
+        if not os.path.exists(file_path):
+            return Response({'error': 'File not found'}, status=404)
+
+        df = pd.read_excel(file_path)
+        print("DataFrame loaded successfully!")
+
+        df = df[df['OS'].str.lower() == os_name.lower()]
         json_data = df.to_dict(orient='records')
         return Response(json_data, status=200)
 

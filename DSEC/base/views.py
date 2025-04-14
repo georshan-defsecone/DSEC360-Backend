@@ -16,6 +16,17 @@ def get_projects_view(request):
     serializer = ProjectSerializer(projects, many=True)
     return Response(serializer.data)
 
+#get project by id
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_project_by_id(request, project_id):
+    try:
+        project = Project.objects.get(project_id=project_id)
+        serializer = ProjectSerializer(project)
+        return Response(serializer.data)
+    except Project.DoesNotExist:
+        return Response({'error': 'Project not found'}, status=status.HTTP_404_NOT_FOUND)
+
 #create project only in djangorestframework
 @api_view(['POST'])
 @permission_classes([AllowAny])

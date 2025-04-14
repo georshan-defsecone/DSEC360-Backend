@@ -2,19 +2,26 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-# from . import views
-from .views import my_projects_view, add_MyProjectsView, trashed_project_view, update_MyProjectsView ,project_scans_view, get_all_users
+from . import views
+
 
 
 urlpatterns = [
-    path('projects/', my_projects_view, name='scan-list'),
-    path('project/add/', add_MyProjectsView, name='scan-add'),
-    path('project/<str:project_id>/trash/',update_MyProjectsView , name='move_to_trash'),
-    path('project/<str:project_id>/', project_scans_view, name='project-scans'),
-    path('project/trash/', trashed_project_view, name='trashed_scans'),
+   # Projects
+    path('projects/', views.get_projects_view),
+    path('project/create/', views.create_project_view),
+    path('project/trash/<str:project_id>/', views.update_project_view),
+    path('projects/trash/', views.trashed_projects_view, name='trashed-projects'),
 
 
-    path('users/', get_all_users, name='get-all-users'),
+    # Scans
+    path('scans/', views.get_scans_view),
+    path('scans/create/', views.create_scan_view),
+    path('scans/update/<int:pk>/', views.update_scan_view),
+
+
+    path('scans/project/<str:project_id>/', views.get_project_scans_view),
+
 ]
 
 

@@ -15,6 +15,12 @@ urlpatterns = [
     path('scans/trashed/', views.trashed_scans_view, name='trashed_scans'),
     path('compliance/configaudit/<str:os_name>/', views.get_compliance_data, name='compliance-data'),
     path('compliance/ioc/<str:os_name>/', views.get_compromise_assessment_data, name='compromise-assessment-data'),
+    path('save-proxy-settings/', views.save_proxy_settings,name='saveproxy'),
+    path('get-proxy-settings/', views.get_proxy_settings,name="getproxy"),
+    path('save-smtp-settings/', views.save_smtp_settings,name='savesmtp'),
+    path('get-smtp-settings/', views.get_smtp_settings,name="getproxy"),
+    path('save-ldap-settings/', views.save_ldap_settings,name='saveldap'),
+     path('get-ldap-settings/', views.get_ldap_settings,name="getldap"),
 
 ]
 

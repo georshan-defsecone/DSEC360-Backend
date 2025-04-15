@@ -1,0 +1,35 @@
+{
+  "proxy": {
+    "enabled": true,
+    "host": "set",
+    "port": "d.SET",
+    "username": "SET",
+    "password": "SET",
+    "authMethod": "basic",
+    "userAgent": "SET"
+  },
+  "smtp": {
+    "enabled": true,
+    "host": "SET",
+    "port": "SET",
+    "from": "SET",
+    "encryption": "no encryption",
+    "hostname": "SET",
+    "authMethod": "none",
+    "username": "",
+    "password": ""
+  },
+  "ldap": {
+    "ldapUrl": "set",
+    "baseDn": "set",
+    "samAccount": "set",
+    "bindMethod": "authenticating",
+    "bindDn": "set",
+    "bindPassword": "set",
+    "groupBaseDn": "set",
+    "adminGroup": "set",
+    "normalGroup": "set",
+    "useSSL": false,
+    "port": "8080"
+  }
+}

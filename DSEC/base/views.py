@@ -63,6 +63,10 @@ from .permissions import IsAdminUserCustom
 from rest_framework import status
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import MyTokenObtainPairSerializer
+import os
+import json
+
+SETTINGS_FILE = os.path.join(os.path.dirname(__file__), 'usersettings.json')
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
@@ -128,3 +132,102 @@ def get_compromise_assessment_data(request, os_name):
     except Exception as e:
         print("Error while loading Excel:", e)
         return Response({'error': str(e)}, status=500)
+    
+
+@api_view(['POST'])
+@permission_classes([IsAdminUserCustom])
+def save_proxy_settings(request):
+    proxy_data = request.data
+
+    # Load existing settings or create new structure
+    existing_data = {}
+    if os.path.exists(SETTINGS_FILE):
+        with open(SETTINGS_FILE, 'r') as f:
+            existing_data = json.load(f)
+
+    # Update proxy section
+    existing_data['proxy'] = proxy_data
+
+    # Save back to JSON file
+    with open(SETTINGS_FILE, 'w') as f:
+        json.dump(existing_data, f, indent=2)
+
+    return Response({'message': 'Proxy settings saved successfully'}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAdminUserCustom])
+def get_proxy_settings(request):
+    if os.path.exists(SETTINGS_FILE):
+        with open(SETTINGS_FILE, 'r') as f:
+            data = json.load(f)
+            proxy_settings = data.get('proxy', {})
+            return Response(proxy_settings, status=status.HTTP_200_OK)
+    else:
+        return Response({}, status=status.HTTP_200_OK)
+    
+
+
+@api_view(['POST'])
+@permission_classes([IsAdminUserCustom])
+def save_smtp_settings(request):
+    smtp_data = request.data
+
+    # Load existing settings or create new structure
+    existing_data = {}
+    if os.path.exists(SETTINGS_FILE):
+        with open(SETTINGS_FILE, 'r') as f:
+            existing_data = json.load(f)
+
+    # Update smtp section
+    existing_data['smtp'] = smtp_data
+
+    # Save back to JSON file
+    with open(SETTINGS_FILE, 'w') as f:
+        json.dump(existing_data, f, indent=2)
+
+    return Response({'message': 'smtp settings saved successfully'}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAdminUserCustom])
+def get_smtp_settings(request):
+    if os.path.exists(SETTINGS_FILE):
+        with open(SETTINGS_FILE, 'r') as f:
+            data = json.load(f)
+            smtp_settings = data.get('smtp', {})
+            return Response(smtp_settings, status=status.HTTP_200_OK)
+    else:
+        return Response({}, status=status.HTTP_200_OK)
+    
+
+@api_view(['GET'])
+@permission_classes([IsAdminUserCustom])
+def get_ldap_settings(request):
+    if os.path.exists(SETTINGS_FILE):
+        with open(SETTINGS_FILE, 'r') as f:
+            data = json.load(f)
+            ldap_settings = data.get('ldap', {})
+            return Response(ldap_settings, status=status.HTTP_200_OK)
+    else:
+        return Response({}, status=status.HTTP_200_OK)
+    
+
+@api_view(['POST'])
+@permission_classes([IsAdminUserCustom])
+def save_ldap_settings(request):
+    ldap_data = request.data
+
+    # Load existing settings or create new structure
+    existing_data = {}
+    if os.path.exists(SETTINGS_FILE):
+        with open(SETTINGS_FILE, 'r') as f:
+            existing_data = json.load(f)
+
+    # Update smtp section
+    existing_data['ldap'] = ldap_data
+
+    # Save back to JSON file
+    with open(SETTINGS_FILE, 'w') as f:
+        json.dump(existing_data, f, indent=2)
+
+    return Response({'message': 'ldap settings saved successfully'}, status=status.HTTP_200_OK)

@@ -7,6 +7,7 @@ from .models import Scan, Project
 from .serializers import ScanSerializer, ProjectSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAdminUserCustom
 
 
 #get projects
@@ -28,6 +29,14 @@ def get_project_by_id(request, project_id):
         return Response(serializer.data)
     except Project.DoesNotExist:
         return Response({'error': 'Project not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+#get projects (fr allprojects in frontend)
+@api_view(['GET'])
+@permission_classes([IsAdminUserCustom])
+def get_all_projects_view(request):
+    projects = Project.objects.filter(trash=False)  # Only non-trashed projects
+    serializer = ProjectSerializer(projects, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 # #create project only in djangorestframework
 # @api_view(['POST'])
@@ -56,7 +65,7 @@ def create_project_view(request):
 
 #trash project
 @api_view(['PUT'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsAdminUserCustom])  
 def update_project_view(request, project_id):
     try:
         project = Project.objects.get(project_id=project_id)
@@ -72,10 +81,21 @@ def update_project_view(request, project_id):
 
 #trashed projects
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsAdminUserCustom])  
 def trashed_projects_view(request):
-    trashed_projects = Project.objects.filter(trash=True)
+    user = request.user
+
+    if user.is_admin:
+        # If the user is an admin, fetch all trashed projects
+        trashed_projects = Project.objects.filter(trash=True)
+    else:
+        trashed_projects = Project.objects.filter(trash=True, project_author=user.username)
     serializer = ProjectSerializer(trashed_projects, many=True)
+    #to check 
+    # print(f"Logged in user: {user.username}")
+    # for p in Project.objects.filter(trash=True):
+    #     print(f"{p.project_id}: {p.project_author}")
+
     return Response(serializer.data)
 
 

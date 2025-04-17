@@ -10,6 +10,7 @@ urlpatterns = [
    # Projects
     path('projects/', views.get_projects_view),
     path('project/<str:project_id>/', views.get_project_by_id,),
+    path('all-projects/', views.get_all_projects_view, name='get_all_projects'),
     path('project/create/', views.create_project_view),
     path('project/trash/<str:project_id>/', views.update_project_view),
     path('projects/trash/', views.trashed_projects_view, ),

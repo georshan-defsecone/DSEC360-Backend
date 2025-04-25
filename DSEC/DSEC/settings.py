@@ -44,8 +44,6 @@ INSTALLED_APPS = [
     "corsheaders",
     'user',
     'scan',
-
-
 ]
 
 MIDDLEWARE = [

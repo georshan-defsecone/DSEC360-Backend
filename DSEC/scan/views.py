@@ -74,7 +74,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 @permission_classes([AllowAny])
 def get_compliance_data(request, os_name):
     try:
-        file_path = os.path.join(settings.BASE_DIR, 'base', 'data', 'Configuration_Audit.xlsx')
+        file_path = os.path.join(settings.BASE_DIR, 'scan', 'data', 'Configuration_Audit.xlsx')
 
         if not os.path.exists(file_path):
             return Response({'error': 'File not found'}, status=404)
@@ -93,7 +93,7 @@ def get_compliance_data(request, os_name):
 @permission_classes([AllowAny])
 def get_compromise_assessment_data(request, os_name):
     try:
-        file_path = os.path.join(settings.BASE_DIR, 'base', 'data', 'Compromise_Assessment_Windows.xlsx')
+        file_path = os.path.join(settings.BASE_DIR, 'scan', 'data', 'Compromise_Assessment.xlsx')
 
         if not os.path.exists(file_path):
             return Response({'error': 'File not found'}, status=404)

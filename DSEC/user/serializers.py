@@ -45,3 +45,17 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+    
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email']  # Only allow name and email updates
+
+    def update(self, instance, validated_data):
+        # Update the instance fields
+        instance.username = validated_data.get('username', instance.username)
+        instance.email = validated_data.get('email', instance.email)
+
+        # Save the updated user
+        instance.save()
+        return instance

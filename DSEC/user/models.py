@@ -29,3 +29,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+    
+
+class Config(models.Model):
+    proxy = models.JSONField(default=dict, blank=True, null=True)
+    smtp = models.JSONField(default=dict, blank=True, null=True)
+    ldap = models.JSONField(default=dict, blank=True, null=True)
+    def __str__(self):
+        return f"Config {self.id}"

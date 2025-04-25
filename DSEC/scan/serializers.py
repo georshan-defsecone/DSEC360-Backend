@@ -1,10 +1,15 @@
 from rest_framework import serializers
-from .models import Scan
+from .models import Project, Scan
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class ScanSerializer(serializers.ModelSerializer):
     class Meta:
         model = Scan
+        fields = '__all__'
+
+class ProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
         fields = '__all__'
 
 

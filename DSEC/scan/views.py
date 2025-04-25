@@ -3,8 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from rest_framework.response import Response
-from .models import Scan
-from .serializers import ScanSerializer
+from .models import Project, Scan
+from .serializers import ProjectSerializer, ScanSerializer
 #from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
 
@@ -20,6 +20,8 @@ from .permissions import IsAdminUserCustom
 from rest_framework import status
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import MyTokenObtainPairSerializer
+from django.db.models import Q
+
 
 
 class MyProjectsView(APIView):
@@ -106,5 +108,182 @@ def get_compromise_assessment_data(request, os_name):
     except Exception as e:
         print("Error while loading Excel:", e)
         return Response({'error': str(e)}, status=500)
+    
+
+#get projects
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # Only authenticated users
+def get_projects_view(request):
+    user = request.user
+    projects = Project.objects.filter(
+        Q(project_author=user.username) | Q(scans__scan_author=user.username),
+        trash=False
+    ).distinct()
+    serializer = ProjectSerializer(projects, many=True)
+    return Response(serializer.data)
+
+
+#get project by id
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_project_by_id(request, project_id):
+    try:
+        project = Project.objects.get(project_id=project_id)
+        serializer = ProjectSerializer(project)
+        return Response(serializer.data)
+    except Project.DoesNotExist:
+        return Response({'error': 'Project not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+#get projects (for allprojects in frontend)
+@api_view(['GET'])
+@permission_classes([IsAdminUserCustom])
+def get_all_projects_view(request):
+    projects = Project.objects.filter(trash=False)  # Only non-trashed projects
+    serializer = ProjectSerializer(projects, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])  # Only authenticated users can create a project
+def create_project_view(request):
+    # Ensure that the logged-in user is set as the project_author
+    data = request.data.copy()
+    data['project_author'] = request.user.id  # Or you can use request.user.username
+
+    serializer = ProjectSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+#trash project
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])  
+def update_project_view(request, project_id):
+    try:
+        project = Project.objects.get(project_id=project_id)
+    except Project.DoesNotExist:
+        return Response({'error': 'Project not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = ProjectSerializer(project, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+#trashed projects
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  
+def trashed_projects_view(request):
+    user = request.user
+
+    if user.is_admin:
+        # If the user is an admin, fetch all trashed projects
+        trashed_projects = Project.objects.filter(trash=True)
+    else:
+        trashed_projects = Project.objects.filter(trash=True, project_author=user.username)
+    serializer = ProjectSerializer(trashed_projects, many=True)
+    #to check 
+    # print(f"Logged in user: {user.username}")
+    # for p in Project.objects.filter(trash=True):
+    #     print(f"{p.project_id}: {p.project_author}")
+
+    return Response(serializer.data)
+
+#remove (trashed) project and thier related scans from DB
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_project_view(request, project_id):
+    try:
+        project = Project.objects.get(project_id=project_id)
+    except Project.DoesNotExist:
+        return Response({'error': 'Project not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Check if the user is the author of the project or an admin
+    if request.user.username != project.project_author and not request.user.is_admin:
+        return Response({'error': 'You do not have permission to delete this project'}, status=status.HTTP_403_FORBIDDEN)
+
+    # Delete related scans
+    project.scans.all().delete()  # assumes related_name='scans' on the FK
+
+    # Delete the project
+    project.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+#remove (trashed) all projects and thier related scans from DB
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_all_projects_view(request):
+    try:
+        trashed_projects = Project.objects.filter(trash=True)
+        for project in trashed_projects:
+            project.scans.all().delete()  # Delete all related scans
+            project.delete()  # Delete the project itself
+        return Response({"message": "All trashed projects and related scans deleted."}, status=200)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
+
+#get scans
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_scans_view(request):
+    scans = Scan.objects.filter(trash=False)
+    serializer = ScanSerializer(scans, many=True)
+    return Response(serializer.data)
+
+#create scan only in djangorestframework
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def create_scan_view(request):
+    serializer = ScanSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#trash scan
+@api_view(['PUT'])
+@permission_classes([AllowAny])
+def update_scan_view(request, pk):
+    try:
+        scan = Scan.objects.get(pk=pk)
+    except Scan.DoesNotExist:
+        return Response({'error': 'Scan not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = ScanSerializer(scan, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#get scans by project id
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_project_scans_view(request, project_id):
+    user = request.user
+
+    try:
+        project = Project.objects.get(project_id=project_id, trash=False)
+    except Project.DoesNotExist:
+        return Response({'error': 'Project not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    if user.is_admin:
+        # Admin: show all scans for the project
+        scans = Scan.objects.filter(project_id=project_id, trash=False)
+    else:
+        # Normal user: show only their scans in the project
+        scans = Scan.objects.filter(
+            project_id=project_id,
+            scan_author=user.username,
+            trash=False
+        )
+
+    serializer = ScanSerializer(scans, many=True)
+    return Response(serializer.data)
+
+
     
 

@@ -44,8 +44,6 @@ INSTALLED_APPS = [
     "corsheaders",
     'user',
     'scan',
-
-
 ]
 
 MIDDLEWARE = [
@@ -105,9 +103,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'defsecone',
-        'USER': 'dhanish',
-        'PASSWORD': 'dhanish123',
-        'HOST': '127.0.0.1',
+        'USER': 'Nagul',
+        'PASSWORD': '252005',
+        'HOST': 'localhost',
         'PORT': '5432'
     }
 }

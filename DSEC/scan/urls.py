@@ -20,6 +20,7 @@ urlpatterns = [
     path('scans/', views.get_scans_view),
     path('scans/create/', views.create_scan_view),
     path('scans/update/<int:pk>/', views.update_scan_view),
+    path('scans/user/', views.get_user_scans_view, name='get_user_scans'),
 
 
     path('scans/project/<str:project_id>/', views.get_project_scans_view),

@@ -6,6 +6,7 @@ class Project(models.Model):
     project_author = models.CharField(max_length=255)
     trash = models.BooleanField(default=False)
 
+
     def __str__(self):
         return self.project_name
 

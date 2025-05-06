@@ -284,6 +284,14 @@ def get_project_scans_view(request, project_id):
     serializer = ScanSerializer(scans, many=True)
     return Response(serializer.data)
 
+#get scans by user logged in for result page
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_scans_view(request):
+    user = request.user
+    scans = Scan.objects.filter(scan_author=user.username, trash=False)
+    serializer = ScanSerializer(scans, many=True)
+    return Response(serializer.data)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])

@@ -21,7 +21,7 @@ urlpatterns = [
     path('scans/create/', views.create_scan_view),
     path('scans/update/<int:pk>/', views.update_scan_view),
 
-
+    path('scans/upload/', views.post_scan_file),
     path('scans/project/<str:project_id>/', views.get_project_scans_view),
     path('scans/', views.MyProjectsView.as_view(), name='scan-list'),
     path('scans/add/', views.add_MyProjectsView, name='scan-add'),

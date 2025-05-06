@@ -7,7 +7,7 @@ from .models import Project, Scan
 from .serializers import ProjectSerializer, ScanSerializer
 #from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
-
+import uuid
 import os
 from django.conf import settings
 import pandas as pd
@@ -285,5 +285,41 @@ def get_project_scans_view(request, project_id):
     return Response(serializer.data)
 
 
-    
-
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def post_scan_file(request):
+    if request.method == 'POST':
+        file = request.FILES.get('file')
+        if not file:
+            return Response({'error': 'No file provided'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Validate file extension
+        allowed_extensions = {'.txt', '.pdf', '.doc', '.docx', '.xls', '.xlsx'}
+        file_ext = os.path.splitext(file.name)[1].lower()
+        if file_ext not in allowed_extensions:
+            return Response({'error': 'Invalid file type'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Create a secure upload directory if it doesn't exist
+        upload_dir = os.path.join(settings.MEDIA_ROOT, 'target')
+        os.makedirs(upload_dir, exist_ok=True)
+        
+        # Generate safe filename
+        safe_filename = f"{uuid.uuid4()}{file_ext}"
+        file_path = os.path.join(upload_dir, safe_filename)
+        
+        try:
+            # Save file safely
+            with open(file_path, 'wb+') as destination:
+                for chunk in file.chunks():
+                    destination.write(chunk)
+            return Response({
+                'message': 'File uploaded successfully',
+                'filename': safe_filename
+            }, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            return Response({
+                'error': f'Error saving file: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+    return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
